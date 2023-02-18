@@ -37,29 +37,29 @@ const Header = (props) => {
     }
   };
 
-  async function GetNeoBalance(){
+  // async function GetNeoBalance(){
 
-    const docRef = doc(db, 'users', user.email);
-    const docSnap = await getDoc(docRef);
+  //   const docRef = doc(db, 'users', user.email);
+  //   const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      console.log('Document data:', docSnap.data());
-      const userData = docSnap.data();
-      const a = new wallet.Account(userData.privateKey);
-    const rpcClient = new rpc.RPCClient(rpcAddress);
-    rpcClient.getNep17Balances(a.address).then(response => {
-      console.log(response);
-    });
-    } else {
-      // doc.data() will be undefined in this case
-      console.log('No such document!');
-    }
+  //   if (docSnap.exists()) {
+  //     console.log('Document data:', docSnap.data());
+  //     const userData = docSnap.data();
+  //     const a = new wallet.Account(userData.privateKey);
+  //   const rpcClient = new rpc.RPCClient(rpcAddress);
+  //   rpcClient.getNep17Balances(a.address).then(response => {
+  //     console.log(response);
+  //   });
+  //   } else {
+  //     // doc.data() will be undefined in this case
+  //     console.log('No such document!');
+  //   }
 
     
-  }
+  // }
 
   useEffect(() => {
-    GetNeoBalance()
+    // GetNeoBalance()
   }, [])
 
   return (
