@@ -1,14 +1,7 @@
 import { CONST, rpc, sc, wallet, tx, u } from "@cityofzion/neon-core";
 
 const inputs = {
-  fromAccount: new wallet.Account(
-    "f3b36532f3cc10bea3b1a0d00dfadd101bb94d425af2c933ed7cdf797232c00e"
-  ),
-  toAccount: new wallet.Account(
-    "533939d4a87d0e7a647edaf3255e93d65aa0c38d057750986018ffcd3127d341"
-  ),
   tokenScriptHash: CONST.NATIVE_CONTRACT_HASH.GasToken,
-  amountToTransfer: 10000000000,
   systemFee: 0,
   networkFee: 0,
   networkMagic: 4181071835, //CONST.MAGIC_NUMBER.TestNet,
@@ -248,9 +241,13 @@ async function performTransfer() {
 
 
   export function TransferGasAssetFromUtil(from, to, amount){
-
-    inputs.fromAccount = from;
-    inputs.toAccount = to
+    inputs.fromAccount = new wallet.Account(
+      from
+    ),
+    inputs.toAccount = new wallet.Account(
+      to
+    ),
+    inputs.amountToTransfer = amount * Math.pow(10, 8);
 
     createTransaction()
     .then(checkToken)
