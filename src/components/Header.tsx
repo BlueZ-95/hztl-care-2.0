@@ -1,39 +1,66 @@
 import { Image } from '@sitecore-jss/sitecore-jss-nextjs';
-import { useState } from 'react';
-import { useAuthState } from "react-firebase-hooks/auth";
+import { useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { ComponentProps } from 'lib/component-props';
-import { firebaseAuth } from 'src/firebase/firebase';
-import {TransferAssetFromUtil} from '../utils/UtilTransferAsset'
-import {TransferGasAssetFromUtil} from '../utils/UTilTransferGas'
-import { CreateWalletUsingUtil } from "../utils/Util";
+import { db, firebaseAuth } from 'src/firebase/firebase';
+import { TransferAssetFromUtil } from '../utils/UtilTransferAsset';
+import { TransferGasAssetFromUtil } from '../utils/UTilTransferGas';
+import { CreateWalletUsingUtil } from '../utils/Util';
+import { doc, getDoc } from 'firebase/firestore';
+import { masterWallet, rpcAddress } from 'src/utils/Const';
+import { CONST,rpc, sc, wallet, tx, u } from '@cityofzion/neon-core';
 
 const Header = (props) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [user, loading, error] = useAuthState(firebaseAuth);
 
+  const [neoBalance, setNeoBalance] = useState(null);
+
   const createWallet = () => {
     // await fetchUserDetails();
-    CreateWalletUsingUtil(user.email)
+    CreateWalletUsingUtil(user.email);
   };
 
-//   const addMoney = async () => {
-//     const docRef = doc(db, "users", user.email);
-//   const docSnap = await getDoc(docRef);
+  const addMoney = async () => {
+    const docRef = doc(db, 'users', user.email);
+    const docSnap = await getDoc(docRef);
 
-// if (docSnap.exists()) {
-//   console.log("Document data:", docSnap.data());
-//   TransferAssetFromUtil();
-//   TransferGasAssetFromUtil();
-// } else {
-//   // doc.data() will be undefined in this case
-//   console.log("No such document!");
-// }
+    if (docSnap.exists()) {
+      console.log('Document data:', docSnap.data());
+      const userData = docSnap.data()
+      TransferAssetFromUtil(masterWallet, userData.privateKey, 5000);
+      TransferGasAssetFromUtil(masterWallet, userData.privateKey, 1000);
+    } else {
+      // doc.data() will be undefined in this case
+      console.log('No such document!');
+    }
+  };
 
+  async function GetNeoBalance(){
 
-    // TransferAssetFromUtil();
-    // TransferGasAssetFromUtil();
-  // };
+    const docRef = doc(db, 'users', user.email);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log('Document data:', docSnap.data());
+      const userData = docSnap.data();
+      const a = new wallet.Account(userData.privateKey);
+    const rpcClient = new rpc.RPCClient(rpcAddress);
+    rpcClient.getNep17Balances(a.address).then(response => {
+      console.log(response);
+    });
+    } else {
+      // doc.data() will be undefined in this case
+      console.log('No such document!');
+    }
+
+    
+  }
+
+  useEffect(() => {
+    GetNeoBalance()
+  }, [])
 
   return (
     <header>
@@ -73,7 +100,7 @@ const Header = (props) => {
               </li>
 
               {user && <button onClick={createWallet}>Create Wallet</button>}
-      {/* {user && <button onClick={addMoney}>Add Money</button>} */}
+              {user && <button onClick={addMoney}>Add Money</button>}
             </ul>
             <a
               href="/"

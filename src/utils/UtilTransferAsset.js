@@ -1,14 +1,7 @@
 import { CONST, rpc, sc, wallet, tx, u } from "@cityofzion/neon-core";
 
 const inputs = {
-  fromAccount: new wallet.Account(
-    "4c67c5314a1e1077d6729be32883328bdd118246c842ff940dd854105a96fccc"
-  ),
-  toAccount: new wallet.Account(
-    "a9858344e1744eb99d7829d7f72f78fe16aaab91034046cafb754367e5205d52"
-  ),
   tokenScriptHash: CONST.NATIVE_CONTRACT_HASH.NeoToken,
-  amountToTransfer: 100,
   systemFee: 0,
   networkFee: 0,
   networkMagic: 4181071835, //CONST.MAGIC_NUMBER.TestNet,
@@ -245,7 +238,15 @@ async function performTransfer() {
 }
 
 
-  export function TransferAssetFromUtil(){
+  export function TransferAssetFromUtil(from, to, amount){
+    inputs.fromAccount = new wallet.Account(
+      from
+    )
+    inputs.toAccount = new wallet.Account(
+      to
+    )
+    inputs.amountToTransfer = amount;
+
     createTransaction()
     .then(checkToken)
     .then(checkNetworkFee)
