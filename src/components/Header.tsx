@@ -1,9 +1,40 @@
 import { Image } from '@sitecore-jss/sitecore-jss-nextjs';
 import { useState } from 'react';
+import { useAuthState } from "react-firebase-hooks/auth";
 import { ComponentProps } from 'lib/component-props';
+import { firebaseAuth } from 'src/firebase/firebase';
+import {TransferAssetFromUtil} from '../utils/UtilTransferAsset'
+import {TransferGasAssetFromUtil} from '../utils/UTilTransferGas'
+import { CreateWalletUsingUtil } from "../utils/Util";
 
 const Header = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const [user, loading, error] = useAuthState(firebaseAuth);
+
+  const createWallet = () => {
+    // await fetchUserDetails();
+    CreateWalletUsingUtil(user.email)
+  };
+
+//   const addMoney = async () => {
+//     const docRef = doc(db, "users", user.email);
+//   const docSnap = await getDoc(docRef);
+
+// if (docSnap.exists()) {
+//   console.log("Document data:", docSnap.data());
+//   TransferAssetFromUtil();
+//   TransferGasAssetFromUtil();
+// } else {
+//   // doc.data() will be undefined in this case
+//   console.log("No such document!");
+// }
+
+
+    // TransferAssetFromUtil();
+    // TransferGasAssetFromUtil();
+  // };
+
   return (
     <header>
       <div className="bg-theme-bg-1">
@@ -40,6 +71,9 @@ const Header = (props) => {
                   Link 03
                 </a>
               </li>
+
+              {user && <button onClick={createWallet}>Create Wallet</button>}
+      {/* {user && <button onClick={addMoney}>Add Money</button>} */}
             </ul>
             <a
               href="/"

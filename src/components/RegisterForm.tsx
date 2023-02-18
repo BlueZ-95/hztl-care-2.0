@@ -4,40 +4,41 @@ import { ComponentProps } from 'lib/component-props';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { db, firebaseAuth } from "../firebase/firebase.js";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
+import { db, firebaseAuth } from "../firebase/firebase.js";
 
-const LoginForm = (props) => {
+import { doc, setDoc } from "firebase/firestore";
+
+const RegisterForm = (props) => {
+  // form validation rules
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required('First Name is required'),
-    email: Yup.string().required('Email is required').email('Email is invalid'),
+    name: Yup.string().required("First Name is required"),
+    email: Yup.string().required("Email is required").email("Email is invalid"),
     password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('Password is required'),
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Passwords must match')
-      .required('Confirm Password is required'),
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm Password is required"),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
+
   // get functions to build form with useForm() hook
   const { register, handleSubmit, reset, formState } = useForm(formOptions);
   const { errors } = formState;
+
   function onSubmit(data) {
     // display form data on success
     createUserWithEmailAndPassword(firebaseAuth, data.email, data.password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-
-        console.log(user);
+      .then(async (result) => {
+        
+  
         // We need to change addDac method to setDoc once walletID is available
-        addDoc(collection(db, 'users'), {
+        setDoc(doc(db, "users", data.email), {
           email: data.email,
-          mobile: data.mobile,
           name: data.name,
-          walletId: 'walletId',
-        }).catch((err) => console.log('err', err));
+        }).then(()=> {}).catch((err) => console.log("err", err));
+        
 
         // ...
       })
@@ -48,6 +49,7 @@ const LoginForm = (props) => {
       });
     return false;
   }
+
   return (
     <div className="">
       <h2 className="">SignUp</h2>
@@ -59,8 +61,8 @@ const LoginForm = (props) => {
               <input
                 name="name"
                 type="text"
-                {...register('name')}
-                className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+                {...register("name")}
+                className={`form-control ${errors.name ? "is-invalid" : ""}`}
               />
               <div className="invalid-feedback">{errors.name?.message}</div>
             </div>
@@ -72,23 +74,10 @@ const LoginForm = (props) => {
               <input
                 name="email"
                 type="text"
-                {...register('email')}
-                className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                {...register("email")}
+                className={`form-control ${errors.email ? "is-invalid" : ""}`}
               />
               <div className="invalid-feedback">{errors.email?.message}</div>
-            </div>
-            <br />
-          </div>
-          <div className="">
-            <div className="">
-              <label>Mobile No.</label>
-              <input
-                name="mobile"
-                type="text"
-                {...register('mobile')}
-                className={`form-control ${errors.mobile ? 'is-invalid' : ''}`}
-              />
-              <div className="invalid-feedback">{errors.mobile?.message}</div>
             </div>
             <br />
           </div>
@@ -98,8 +87,10 @@ const LoginForm = (props) => {
               <input
                 name="password"
                 type="password"
-                {...register('password')}
-                className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                {...register("password")}
+                className={`form-control ${
+                  errors.password ? "is-invalid" : ""
+                }`}
               />
               <div className="invalid-feedback">{errors.password?.message}</div>
             </div>
@@ -109,10 +100,14 @@ const LoginForm = (props) => {
               <input
                 name="confirmPassword"
                 type="password"
-                {...register('confirmPassword')}
-                className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`}
+                {...register("confirmPassword")}
+                className={`form-control ${
+                  errors.confirmPassword ? "is-invalid" : ""
+                }`}
               />
-              <div className="invalid-feedback">{errors.confirmPassword?.message}</div>
+              <div className="invalid-feedback">
+                {errors.confirmPassword?.message}
+              </div>
             </div>
             <br />
           </div>
@@ -120,15 +115,18 @@ const LoginForm = (props) => {
             <button type="submit" className="btn btn-primary mr-1">
               Register
             </button>
-            <button type="button" onClick={() => reset()} className="btn btn-secondary">
+            <button
+              type="button"
+              onClick={() => reset()}
+              className="btn btn-secondary"
+            >
               Reset
             </button>
           </div>
         </form>
       </div>
-      <p>Already have an account?</p>
     </div>
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
