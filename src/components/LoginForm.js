@@ -8,7 +8,7 @@ import { db, firebaseAuth } from "../firebase/firebase.js";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 
-const LoginForm = (props: any): JSX.Element => {
+const LoginForm = (props) => {
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('First Name is required'),
     email: Yup.string().required('Email is required').email('Email is invalid'),

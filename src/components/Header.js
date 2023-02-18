@@ -2,7 +2,7 @@ import { Image } from '@sitecore-jss/sitecore-jss-nextjs';
 import { useState } from 'react';
 import { ComponentProps } from 'lib/component-props';
 
-const Header = (props: any): JSX.Element => {
+const Header = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   return (
     <header>

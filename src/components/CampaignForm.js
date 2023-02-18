@@ -9,7 +9,7 @@ import { db, firebaseStorage } from "../firebase/firebase.js";
 import { ref, uploadBytes } from "firebase/storage";
 import * as Yup from "yup";
 
-const CampaignForm = (props: any): JSX.Element => {
+const CampaignForm = (props) => {
   const [campaignImage, setcampaignImage] = useState(null);
   // form validation rules
   const validationSchema = Yup.object().shape({

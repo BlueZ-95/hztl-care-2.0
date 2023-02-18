@@ -2,7 +2,7 @@ import { Image } from '@sitecore-jss/sitecore-jss-nextjs';
 import { useState } from 'react';
 import { ComponentProps } from 'lib/component-props';
 
-const Footer = (props: any): JSX.Element => {
+const Footer = (props) => {
   return (
     <footer className="bg-theme-02">
       <div className="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
