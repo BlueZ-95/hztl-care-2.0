@@ -15,7 +15,7 @@ export default function Home() {
                 <div className="flex items-center justify-center rounded-full bg-indigo-50">
                   <Image
                     priority
-                    src="hcare-logo.svg"
+                    src="/hcare-logo.svg"
                     height={90}
                     width={90}
                     alt="Horizontal Care"

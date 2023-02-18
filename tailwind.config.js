@@ -9,11 +9,10 @@
 module.exports = {
   content: [
     './public/**/*.html',
-    './pages/index.js',
-    './pages/_app.js',
-    './pages/**/*.js',
-    './components/*.js',
-    './pages/*.js',
+    './src/pages/**/*.{js,ts,jsx,tsx}',
+    './src/components/**/*.{js,ts,jsx,tsx}',
+    './src/helpers/**/*.{js,ts,jsx,tsx}',
+    './src/lib/**/*.{js,ts,jsx,tsx}',
   ],
   darkMode: 'media',
   theme: {

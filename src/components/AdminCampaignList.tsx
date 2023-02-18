@@ -1,6 +1,91 @@
-// @ts-nocheck
+import { useEffect, useState } from "react";
+
+import { CONST,rpc, sc, wallet, tx, u } from '@cityofzion/neon-core';
+import { rpcAddress, scriptHash, userPvtKey } from "src/utils/Const";
+
+import N3Helper from '../utils/UtilHelper.js';
+import { contract } from 'src/utils/Util.js';
+import * as N3Constants from '../utils/Const.js';
 
 export default function CampaignLists() {
+  const [campaigns, setCampaigns] = useState([]);
+
+  useEffect(() => {
+    readBlockChainData()
+  }, [])
+
+  function readBlockChainData(){
+
+    const sb = new sc.ScriptBuilder();
+    const rpcClient = new rpc.RPCClient(rpcAddress);
+    const account = new wallet.Account(userPvtKey);
+
+    sb.emitAppCall(scriptHash, 'getCampaignData', ['campaigns']);
+    console.log(account.scriptHash);
+    rpcClient
+      .invokeScript(u.HexString.fromHex(sb.str), [
+        {
+          account: account.scriptHash,
+          scopes: tx.WitnessScope.CalledByEntry,
+        },
+      ])
+      .then((res) => {
+        console.log(res);
+        var jsonData = [];
+        res.stack[0].value.map((el, index) => {
+          console.log(el);
+          el.value.map( (data,index)=>{
+            console.log(data);
+            if(index == 0){
+              console.log(atob(data.value));
+
+            }else{
+              
+              if(atob(data.value).indexOf('privateKey') > -1) {
+                var json = JSON.parse(atob(data.value).substring(4));
+                console.log(json);
+                jsonData.push(json);
+              } else if(atob(data.value).indexOf('isApproved') > -1) {
+                var json = JSON.parse(atob(data.value).substring(2));
+                console.log(json);
+                jsonData.push(json);
+              }
+            }
+          })
+        });
+        console.log('campaigns', jsonData);
+
+        // image
+        // https://firebasestorage.googleapis.com/v0/b/hztl-care.appspot.com/o/campaignImages%2Fcampaign-ab0ab6d9-df9c-49dd-8c3a-db272cc73a17?alt=media&token=85779888-abb0-4332-a79e-45de9fffb1be
+    
+        //console.log(combinedItems(jsonData));
+        //console.log(u.base642utf8(res.stack[0].value));
+      });
+  }
+
+  const updateCampaignStatus = status => {
+    console.log('statusChange');
+    
+    const neoHelper = new N3Helper(
+      contract(
+        N3Constants.scriptHash,
+        N3Constants.rpcAddress,
+        N3Constants.userPvtKey,
+      ),
+    );
+    neoHelper.contractInvoke('approveCampaignData', [
+      {
+        type: 'String',
+        value: "4d6e3684-c996-4e68-9266-e7b7d9d1dad5",
+        // campaignId
+      },
+      {
+        type: 'String',
+        value: '{"campaignid":"4d6e3684-c996-4e68-9266-e7b7d9d1dad5","isApproved":"true"}',
+      }
+    ]);
+  }
+
   return (
       <main>
         <div className="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-10">
@@ -144,11 +229,11 @@ export default function CampaignLists() {
                           </td>
                           <td class="px-4 py-4 text-sm whitespace-nowrap">
                             <div class="flex items-center gap-x-6">
-                              <button class="inline-flex items-center justify-center h-10 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none">
+                              <button onClick={() => updateCampaignStatus(true)} class="inline-flex items-center justify-center h-10 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none">
                                 Approve
                               </button>
 
-                              <button class="inline-flex items-center justify-center h-10 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-01 focus:shadow-outline focus:outline-none">
+                              <button onClick={() => updateCampaignStatus(false)} class="inline-flex items-center justify-center h-10 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-01 focus:shadow-outline focus:outline-none">
                                 Reject
                               </button>
                             </div>
