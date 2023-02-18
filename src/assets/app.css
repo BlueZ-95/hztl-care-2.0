@@ -26,3 +26,21 @@ a[target='_blank']:after {
     font-weight: 300;
     line-height: 1.2;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --theme-bg-color: theme('colors.black');
+  --theme-bg-alt-color: rgba(255, 255, 255, 0.05);
+  --theme-btn-color: theme('colors.turquoise.DEFAULT');
+  --theme-btn-hover-color: theme('colors.turquoise.dark');
+  --theme-btn-text-color: theme('colors.black');
+  --theme-outline-color: theme('colors.white');
+  --theme-text-color: theme('colors.white');
+  --theme-text-alt-color: rgba(255, 255, 255, 0.5);
+  --theme-000001-color: theme('colors.error.black');
+  --theme-01-color: #F48366;
+  --theme-01-text-color: theme('colors.black');
+}

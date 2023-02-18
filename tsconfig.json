@@ -29,6 +29,5 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/Footer.tsx", src/components/LoginForm.tsxs", "src/components/ContentBlock.tsx", "src/components/CampaignForm.tsx", "src/components/CampaignDetail.tsxsrc/components/Header.tsxr.js"],
   "exclude": ["node_modules"]
 }
