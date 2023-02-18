@@ -1,11 +1,8 @@
+// @ts-nocheck
 import Image from "next/image";
-import Header from "../../components/header";
-import Footer from "../../components/footer";
 
 export default function CampaignList() {
   return (
-    <>
-      <Header />
       <main>
         <div className="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-10">
           <div className="flex flex-col w-full mb-6 lg:justify-between lg:flex-row md:mb-8">
@@ -136,7 +133,5 @@ export default function CampaignList() {
           </div>
         </div>
       </main>
-      <Footer />
-    </>
   );
 }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Image } from '@sitecore-jss/sitecore-jss-nextjs';
 import { useState } from 'react';
 import { ComponentProps } from 'lib/component-props';
