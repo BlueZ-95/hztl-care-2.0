@@ -1,0 +1,12 @@
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\bin\Debug\net6.0\CrowdFundingContract.deps.json
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\bin\Debug\net6.0\CrowdFundingContract.dll
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\bin\Debug\net6.0\CrowdFundingContract.pdb
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\obj\Debug\net6.0\CrowdFundingContract.csproj.AssemblyReference.cache
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\obj\Debug\net6.0\CrowdFundingContract.GeneratedMSBuildEditorConfig.editorconfig
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\obj\Debug\net6.0\CrowdFundingContract.AssemblyInfoInputs.cache
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\obj\Debug\net6.0\CrowdFundingContract.AssemblyInfo.cs
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\obj\Debug\net6.0\CrowdFundingContract.csproj.CoreCompileInputs.cache
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\obj\Debug\net6.0\CrowdFundingContract.dll
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\obj\Debug\net6.0\refint\CrowdFundingContract.dll
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\obj\Debug\net6.0\CrowdFundingContract.pdb
+C:\Hackathon\BlockChain\contracts\CrowdFunding\src\obj\Debug\net6.0\ref\CrowdFundingContract.dll

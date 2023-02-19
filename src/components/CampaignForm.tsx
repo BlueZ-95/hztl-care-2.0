@@ -13,10 +13,14 @@ import N3Helper from '../utils/UtilHelper.js';
 import { contract } from 'src/utils/Util.js';
 import * as N3Constants from '../utils/Const.js';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 
 const CampaignForm = (props) => {
   const [user, loading, error] = useAuthState(firebaseAuth);
+  const MySwal = withReactContent(Swal)
+
 
   useEffect(() => {
     console.log('user', user);
@@ -93,7 +97,12 @@ const CampaignForm = (props) => {
         firebaseStorage,
         `campaignImages/campaign-${campaignId}`
       );
-      uploadBytes(imageRef, campaignImage).then(() => alert("success"));
+      uploadBytes(imageRef, campaignImage).then(() => 
+      MySwal.fire({
+        title: <p>Campaign created successfully</p>,
+        icon: 'success'
+        
+      }));
     }
 
     } else {

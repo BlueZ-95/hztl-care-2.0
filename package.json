@@ -48,6 +48,8 @@
     "react-dom": "^18.1.0",
     "react-firebase-hooks": "^5.1.1",
     "react-hook-form": "^7.43.1",
+    "sweetalert2": "^11.7.2",
+    "sweetalert2-react-content": "^5.0.7",
     "tailwindcss": "^3.2.7",
     "uuid": "^9.0.0",
     "yup": "^1.0.0"
@@ -101,6 +103,6 @@
     "start:disconnected-proxy": "ts-node --project tsconfig.scripts.json ./scripts/disconnected-mode-proxy.ts",
     "start:production": "npm-run-all --serial bootstrap next:build next:start",
     "start:watch-components": "ts-node --project tsconfig.scripts.json scripts/generate-component-factory.ts --watch",
-    "build-css":"npx tailwindcss -i ./src/assets/app.css -o ./src/assets/main.css"
+    "build-css": "npx tailwindcss -i ./src/assets/app.css -o ./src/assets/main.css"
   }
 }

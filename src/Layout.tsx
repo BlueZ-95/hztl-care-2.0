@@ -36,7 +36,7 @@ const Layout = ({ layoutData }: LayoutProps): JSX.Element => {
       </Head> */}
       {route && <Placeholder name="jss-hackathon-header" rendering={route} />}
       {/* root placeholder for the app, which we add components to using route data */}
-      <div className="container">{route && <Placeholder name="jss-main" rendering={route} />}</div>
+      {route && <Placeholder name="jss-main" rendering={route} />}
       {route && <Placeholder name="jss-hackathon-footer" rendering={route} />}
     </>
   );

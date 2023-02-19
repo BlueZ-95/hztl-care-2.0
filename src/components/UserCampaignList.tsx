@@ -45,10 +45,14 @@ export default function CampaignList() {
                 console.log(json);
                 jsonData.push(json);
               } else if(atob(data.value).indexOf('isApproved') > -1) {
-                var json = JSON.parse(atob(data.value).substring(2));
-                console.log(json);
-                jsonData.push(json);
-              }
+                const ignoreIds = ["2a1eafc5-5efe-48a2-8082-638bfbd60653", "36b5171d-c1d5-4812-8d7d-42ca7b03759c", "4d6e3684-c996-4e68-9266-e7b7d9d1dad5", "6aa2b034-2d22-4e0d-b5f7-52a1328767ba","b0ba3b22-60f1-4d06-b999-a095b671eea1"]
+                          if(atob(data.value).indexOf(ignoreIds[0]) > -1 || atob(data.value).indexOf(ignoreIds[1]) > -1 || atob(data.value).indexOf(ignoreIds[2]) > -1 || atob(data.value).indexOf(ignoreIds[3]) > -1 || atob(data.value).indexOf(ignoreIds[4]) > -1 || atob(data.value).indexOf(ignoreIds[5]) > -1) {}
+                          else {
+                            var json = JSON.parse(atob(data.value).substring(2));
+                          console.log(json);
+                          jsonData.push(json);
+                          }
+                        }
               
             }
           })

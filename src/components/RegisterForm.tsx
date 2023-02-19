@@ -9,8 +9,10 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { db, firebaseAuth } from "../firebase/firebase.js";
 
 import { doc, setDoc } from "firebase/firestore";
+import { useRouter } from 'next/router.js';
 
 const RegisterForm = (props) => {
+  const router = useRouter()
   // form validation rules
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("First Name is required"),
@@ -44,7 +46,7 @@ const RegisterForm = (props) => {
         setDoc(doc(db, "users", data.email), {
           email: data.email,
           name: data.name,
-        }).then(()=> {}).catch((err) => console.log("err", err));
+        }).then(()=> {router.push("/")}).catch((err) => console.log("err", err));
         
 
         // ...
@@ -178,13 +180,6 @@ const RegisterForm = (props) => {
                         className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none mr-4"
                       >
                         SignUp
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => reset()}
-                        className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-01 hover:bg-theme-01-hover focus:shadow-outline focus:outline-none mr-4"
-                      >
-                        Reset
                       </button>
                     </div>
                   </form>

@@ -51,3 +51,27 @@ function createWallet(walletString, userName) {
     console.log("wallet created");
   });
 }
+
+export function mergeUniqueObjects(arr) {
+  const mergedArray = [];
+  // Create an object to store the merged objects
+  const mergedObjects = {};
+
+  for (let i = 0; i < arr.length; i++) {
+    const campaignid = arr[i].campaignid || arr[i].campaignId;
+    
+    if (mergedObjects[campaignid]) {
+      // If an object with the same campaignid already exists,
+      // merge the properties of the existing object and the current object
+      mergedObjects[campaignid] = Object.assign({}, mergedObjects[campaignid], arr[i]);
+    } else {
+      // If no object with the same campaignid exists, add the object to the merged objects object
+      mergedObjects[campaignid] = arr[i];
+    }
+  }
+  // Convert the merged objects object to an array and return it
+  for (let campaignid in mergedObjects) {
+    mergedArray.push(mergedObjects[campaignid]);
+  }
+  return mergedArray;
+}

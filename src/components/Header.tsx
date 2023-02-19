@@ -1,14 +1,20 @@
-import { Image } from '@sitecore-jss/sitecore-jss-nextjs';
+import Image from 'next/image';
+
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { ComponentProps } from 'lib/component-props';
-import { db, firebaseAuth } from 'src/firebase/firebase';
+import firebase, { db, firebaseAuth } from 'src/firebase/firebase';
 import { TransferAssetFromUtil } from '../utils/UtilTransferAsset';
 import { TransferGasAssetFromUtil } from '../utils/UTilTransferGas';
 import { CreateWalletUsingUtil } from '../utils/Util';
 import { doc, getDoc } from 'firebase/firestore';
 import { masterWallet, rpcAddress } from 'src/utils/Const';
-import { CONST,rpc, sc, wallet, tx, u } from '@cityofzion/neon-core';
+import { CONST, rpc, sc, wallet, tx, u } from '@cityofzion/neon-core';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'next/router';
+
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 const Header = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,11 +22,28 @@ const Header = (props) => {
   const [user, loading, error] = useAuthState(firebaseAuth);
 
   const [neoBalance, setNeoBalance] = useState(null);
+  const MySwal = withReactContent(Swal)
+
+
+  const router = useRouter();
 
   const createWallet = () => {
     // await fetchUserDetails();
     CreateWalletUsingUtil(user.email);
+    MySwal.fire({
+      title: <p>Wallet created successfully</p>,
+      icon: 'success'
+      
+    })
   };
+
+  const [showModal, setShowModal] = useState(false)
+  if (showModal == true) {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    })
+  }
 
   const addMoney = async () => {
     const docRef = doc(db, 'users', user.email);
@@ -28,39 +51,57 @@ const Header = (props) => {
 
     if (docSnap.exists()) {
       console.log('Document data:', docSnap.data());
-      const userData = docSnap.data()
+      const userData = docSnap.data();
       TransferAssetFromUtil(masterWallet, userData.privateKey, 5000);
       TransferGasAssetFromUtil(masterWallet, userData.privateKey, 1000);
+      MySwal.fire({
+        title: <p>Amount added successfully</p>,
+        icon: 'success'
+        
+      })
     } else {
       // doc.data() will be undefined in this case
       console.log('No such document!');
     }
+  
   };
 
-  // async function GetNeoBalance(){
+  const logout = () => {
+signOut(firebaseAuth).then(() => {
+  // Sign-out successful.
+  router.push('/')
+}).catch((error) => {
+  // An error happened.
+});
+  }
 
-  //   const docRef = doc(db, 'users', user.email);
-  //   const docSnap = await getDoc(docRef);
+  async function GetNeoBalance(){
+    if(user) {
 
-  //   if (docSnap.exists()) {
-  //     console.log('Document data:', docSnap.data());
-  //     const userData = docSnap.data();
-  //     const a = new wallet.Account(userData.privateKey);
-  //   const rpcClient = new rpc.RPCClient(rpcAddress);
-  //   rpcClient.getNep17Balances(a.address).then(response => {
-  //     console.log(response);
-  //   });
-  //   } else {
-  //     // doc.data() will be undefined in this case
-  //     console.log('No such document!');
-  //   }
+    const docRef = doc(db, 'users', user.email);
+    const docSnap = await getDoc(docRef);
 
-    
-  // }
+    if (docSnap.exists()) {
+      console.log('Document data:', docSnap.data());
+      const userData = docSnap.data();
+      const a = new wallet.Account(userData.privateKey);
+    const rpcClient = new rpc.RPCClient(rpcAddress);
+    rpcClient.getNep17Balances(a.address).then(response => {
+      console.log(response);
+
+      response.balance.length > 0 && setNeoBalance(response.balance[1].amount)
+    });
+    } else {
+      // doc.data() will be undefined in this case
+      console.log('No such document!');
+    }
+  }
+  }
 
   useEffect(() => {
-    // GetNeoBalance()
-  }, [])
+    GetNeoBalance()
+
+  }, [user]);
 
   return (
     <header>
@@ -75,7 +116,7 @@ const Header = (props) => {
                   title="Our product"
                   className="font-medium tracking-wide text-gray-dark transition-colors duration-200 hover:theme-01"
                 >
-                  Link 01
+                  Campaigns
                 </a>
               </li>
               <li>
@@ -85,7 +126,7 @@ const Header = (props) => {
                   title="Our product"
                   className="font-medium text-gray-dark tracking-wide transition-colors duration-200 hover:theme-01"
                 >
-                  Link 02
+                  Aboutus
                 </a>
               </li>
               <li>
@@ -95,12 +136,9 @@ const Header = (props) => {
                   title="Product pricing"
                   className="font-medium tracking-wide text-gray-dark transition-colors duration-200 hover:theme-01"
                 >
-                  Link 03
+                  Contactus
                 </a>
               </li>
-
-              {user && <button onClick={createWallet}>Create Wallet</button>}
-              {user && <button onClick={addMoney}>Add Money</button>}
             </ul>
             <a
               href="/"
@@ -108,15 +146,24 @@ const Header = (props) => {
               title="Company"
               className="inline-flex items-center lg:mx-auto"
             >
-              <Image priority src="hcare-logo.svg" height={120} width={120} alt="Horizontal Care" />
+              <Image
+                priority
+                src="/hcare-logo.svg"
+                height={120}
+                width={120}
+                alt="Horizontal Care"
+              />
+
               <span className="ml-2 text-xl font-bold tracking-wide text-theme-01 uppercase hidden">
                 Horizontal Care
               </span>
             </a>
             <ul className="flex items-center hidden ml-auto space-x-8 lg:flex">
+              {!user ?
+              <>
               <li>
                 <a
-                  href="/"
+                  href="/login"
                   aria-label="Sign in"
                   title="Sign in"
                   className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none"
@@ -126,7 +173,7 @@ const Header = (props) => {
               </li>
               <li>
                 <a
-                  href="/"
+                  href="/register"
                   className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none"
                   aria-label="Sign up"
                   title="Sign up"
@@ -134,6 +181,33 @@ const Header = (props) => {
                   Sign up
                 </a>
               </li>
+              </>
+              :
+              <>
+              {neoBalance && <p>Neo Balance: {neoBalance}</p>}
+              {!neoBalance && <button onClick={createWallet}
+                  className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none"
+                  >Create Wallet</button>
+              }
+              
+              <button onClick={addMoney}
+                  className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none"
+                  >Add Money</button>
+                  <li>
+                <a
+                  href="/createcampaign"
+                  className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none"
+                  aria-label="create"
+                  title="create"
+                >
+                  Create
+                </a>
+              </li>
+                  <button onClick={logout}
+                  className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none"
+                  >Sign out</button>
+              </>
+              }
             </ul>
             <div className="ml-auto lg:hidden">
               <button
@@ -228,26 +302,30 @@ const Header = (props) => {
                             Link 3
                           </a>
                         </li>
-                        <li>
-                          <a
-                            href="/"
-                            aria-label="Sign in"
-                            title="Sign in"
-                            className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none"
-                          >
-                            Sign in
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="/"
-                            className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none"
-                            aria-label="Sign up"
-                            title="Sign up"
-                          >
-                            Sign up
-                          </a>
-                        </li>
+                        {!user && (
+                          <>
+                            <li>
+                              <a
+                                href="/"
+                                aria-label="Sign in"
+                                title="Sign in"
+                                className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none"
+                              >
+                                Sign in
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                href="/"
+                                className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-theme-btn-text transition duration-200 rounded shadow-md bg-theme-btn hover:bg-theme-btn-hover focus:shadow-outline focus:outline-none"
+                                aria-label="Sign up"
+                                title="Sign up"
+                              >
+                                Sign up
+                              </a>
+                            </li>
+                          </>
+                        )}
                       </ul>
                     </nav>
                   </div>
