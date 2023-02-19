@@ -1,0 +1,60 @@
+{
+  "magic": 4181071835,
+  "address-version": 53,
+  "consensus-nodes": [
+    {
+      "tcp-port": 50013,
+      "ws-port": 50014,
+      "rpc-port": 50012,
+      "wallet": {
+        "name": "node1",
+        "accounts": [
+          {
+            "private-key": "f6659f08d9e1153a64818920f1d3f1da48e343ab67180f1dff164701a9fd1a22",
+            "script-hash": "NSPYhkLDzkXCSVB1pfEK1NAeqrswDTHzYu",
+            "label": null,
+            "is-default": true,
+            "contract": {
+              "script": "0c21026dfe3e3df391d8fa260336fdff02fbe171decd66b3e7ce082815efa5d33e557a4156e7b327",
+              "parameters": [
+                "Signature"
+              ]
+            }
+          },
+          {
+            "private-key": "f6659f08d9e1153a64818920f1d3f1da48e343ab67180f1dff164701a9fd1a22",
+            "script-hash": "NT78jvKEG6bNTfH6CNavy91zcrbZAzd45M",
+            "label": "Consensus MultiSigContract",
+            "is-default": false,
+            "contract": {
+              "script": "110c21026dfe3e3df391d8fa260336fdff02fbe171decd66b3e7ce082815efa5d33e557a11419ed0dc3a",
+              "parameters": [
+                "Signature"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "wallets": [
+    {
+      "name": "CrowdFundingAppWallet",
+      "accounts": [
+        {
+          "private-key": "4c67c5314a1e1077d6729be32883328bdd118246c842ff940dd854105a96fccc",
+          "script-hash": "NULAERcG3tkMiABixUyGL3tDr2AQZd316W",
+          "label": null,
+          "is-default": true,
+          "contract": {
+            "script": "0c210325dd59b6ee1f34f0ea1729f6fdf8f0b796aa7ce8ae61cc917b7a71544e3d39a94156e7b327",
+            "parameters": [
+              "Signature"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "settings": {}
+}

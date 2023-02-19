@@ -1,15 +1,35 @@
+
 import { Image } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from "uuid";
-import { addDoc, collection } from "firebase/firestore";
-import { db, firebaseStorage } from "../firebase/firebase.js";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import { db, firebaseAuth, firebaseStorage } from "../firebase/firebase.js";
 import { ref, uploadBytes } from "firebase/storage";
 import * as Yup from "yup";
+import N3Helper from '../utils/UtilHelper.js';
+import { contract } from 'src/utils/Util.js';
+import * as N3Constants from '../utils/Const.js';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
 
 const CampaignForm = (props) => {
+  const [user, loading, error] = useAuthState(firebaseAuth);
+  const MySwal = withReactContent(Swal)
+
+
+  useEffect(() => {
+    console.log('user', user);
+    
+    
+
+    
+  }, [])
+
   const [campaignImage, setcampaignImage] = useState(null);
   // form validation rules
   const validationSchema = Yup.object().shape({
@@ -30,43 +50,85 @@ const CampaignForm = (props) => {
         "End Date must be a valid date in the format YYYY-MM-DD"
       ),
   });
+
   const formOptions = { resolver: yupResolver(validationSchema) };
 
   // get functions to build form with useForm() hook
   const { register, handleSubmit, reset, formState } = useForm(formOptions);
   const { errors } = formState;
 
-  function onSubmit(data) {
+  async function onSubmit(data) {
     // display form data on success
-    alert("SUCCESS!! :-)\n\n" + JSON.stringify(data, null, 4));
+    // alert("SUCCESS!! :-)\n\n" + JSON.stringify(data, null, 4));
 
-    const campaignId = uuidv4();
+    const docRef = doc(db, 'users', user.email);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log('Document data:', docSnap.data());
+      const userData = docSnap.data()
+
+      const campaignId = uuidv4();
+
+    data.campaignId = campaignId;
+    data.privateKey = userData.privateKey;
+
+
+    const neoHelper = new N3Helper(
+      contract(
+        N3Constants.scriptHash,
+        N3Constants.rpcAddress,
+        N3Constants.userPvtKey,
+      ),
+    );
+    neoHelper.contractInvoke('saveCampaignData', [
+      {
+        type: 'String',
+        value: campaignId,
+      },
+      {
+        type: 'String',
+        value: JSON.stringify(data),
+      }
+    ]);
 
     if (campaignImage !== null) {
       const imageRef = ref(
         firebaseStorage,
         `campaignImages/campaign-${campaignId}`
       );
-      uploadBytes(imageRef, campaignImage).then(() => alert("success"));
+      uploadBytes(imageRef, campaignImage).then(() => 
+      MySwal.fire({
+        title: <p>Campaign created successfully</p>,
+        icon: 'success'
+        
+      }));
     }
 
-    addDoc(collection(db, "campaigns"), {
-      campaignId: campaignId,
-      campaignName: data.campaignName,
-      campaignImage: `campaign-${campaignId}`,
-    }).catch((err) => console.log("err", err));
+    } else {
+      // doc.data() will be undefined in this case
+      console.log('No such document!');
+    }
+
+
+    
+    // addDoc(collection(db, "campaigns"), {
+    //   campaignId: campaignId,
+    //   campaignName: data.campaignName,
+    //   campaignImage: `campaign-${campaignId}`,
+    // }).catch((err) => console.log("err", err));
     return false;
   }
 
-  const uploadImage = () => {
-    if (campaignImage !== null) {
-      const imageRef = ref(
-        firebaseStorage,
-        `campaignImages/campaign-${campaignId}`
-      );
-      uploadBytes(imageRef, campaignImage).then(() => alert("success"));
-    }
-  };
+  // const uploadImage = () => {
+  //   if (campaignImage !== null) {
+  //     const imageRef = ref(
+  //       firebaseStorage,
+  //       `campaignImages/campaign-${campaignId}`
+  //     );
+  //     uploadBytes(imageRef, campaignImage).then(() => alert("success"));
+  //   }
+  // };
 
   return (
     <div className="relative">

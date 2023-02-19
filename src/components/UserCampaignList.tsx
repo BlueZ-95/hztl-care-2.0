@@ -1,7 +1,72 @@
-// @ts-nocheck
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { CONST,rpc, sc, wallet, tx, u } from '@cityofzion/neon-core';
+import { rpcAddress, scriptHash, userPvtKey } from "src/utils/Const";
+
 
 export default function CampaignList() {
+
+  const [campaigns, setCampaigns] = useState([]);
+
+  useEffect(() => {
+    readBlockChainData()
+  }, [])
+
+  function readBlockChainData(){
+
+    const sb = new sc.ScriptBuilder();
+    const rpcClient = new rpc.RPCClient(rpcAddress);
+    const account = new wallet.Account(userPvtKey);
+
+    sb.emitAppCall(scriptHash, 'getCampaignData', ['campaigns']);
+    console.log(account.scriptHash);
+    rpcClient
+      .invokeScript(u.HexString.fromHex(sb.str), [
+        {
+          account: account.scriptHash,
+          scopes: tx.WitnessScope.CalledByEntry,
+        },
+      ])
+      .then((res) => {
+        console.log(res);
+        var jsonData = [];
+        res.stack[0].value.map((el, index) => {
+          console.log(el);
+          el.value.map( (data,index)=>{
+            console.log(data);
+            if(index == 0){
+              console.log(atob(data.value));
+
+            }else{
+              
+              if(atob(data.value).indexOf('privateKey') > -1) {
+                var json = JSON.parse(atob(data.value).substring(4));
+                console.log(json);
+                jsonData.push(json);
+              } else if(atob(data.value).indexOf('isApproved') > -1) {
+                const ignoreIds = ["2a1eafc5-5efe-48a2-8082-638bfbd60653", "36b5171d-c1d5-4812-8d7d-42ca7b03759c", "4d6e3684-c996-4e68-9266-e7b7d9d1dad5", "6aa2b034-2d22-4e0d-b5f7-52a1328767ba","b0ba3b22-60f1-4d06-b999-a095b671eea1"]
+                          if(atob(data.value).indexOf(ignoreIds[0]) > -1 || atob(data.value).indexOf(ignoreIds[1]) > -1 || atob(data.value).indexOf(ignoreIds[2]) > -1 || atob(data.value).indexOf(ignoreIds[3]) > -1 || atob(data.value).indexOf(ignoreIds[4]) > -1 || atob(data.value).indexOf(ignoreIds[5]) > -1) {}
+                          else {
+                            var json = JSON.parse(atob(data.value).substring(2));
+                          console.log(json);
+                          jsonData.push(json);
+                          }
+                        }
+              
+            }
+          })
+        });
+        console.log('campaigns', jsonData);
+
+        // image
+        // https://firebasestorage.googleapis.com/v0/b/hztl-care.appspot.com/o/campaignImages%2Fcampaign-ab0ab6d9-df9c-49dd-8c3a-db272cc73a17?alt=media&token=85779888-abb0-4332-a79e-45de9fffb1be
+    
+        //console.log(combinedItems(jsonData));
+        //console.log(u.base642utf8(res.stack[0].value));
+      });
+  }
+
   return (
       <main>
         <div className="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-10">
@@ -11,7 +76,7 @@ export default function CampaignList() {
                 <div className="flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50">
                   <Image
                     priority
-                    src="horizontal-care.svg"
+                    src="/horizontal-care.svg"
                     height={30}
                     width={30}
                     alt="Horizontal Care"

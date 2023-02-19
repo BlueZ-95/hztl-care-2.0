@@ -1,6 +1,32 @@
-# Sitecore JSS Next.js Sample Application
+# Horizontal Care
 
+Horizontal Care is a portal that provides crowdfunding facility for Horizontal family. Where the employees can create a campaign to raise funds for any good cause.
 
-[Documentation (Experience Platform)](https://doc.sitecore.com/xp/en/developers/hd/201/sitecore-headless-development/sitecore-javascript-rendering-sdk--jss--for-next-js.html)
+## Installation
 
-[Documentation (XM Cloud)](https://doc.sitecore.com/xmc/en/developers/xm-cloud/sitecore-javascript-rendering-sdk--jss--for-next-js.html)
+Install project sitecore with npm:-
+
+```bash
+    npm install -g @sitecore-jss/sitecore-jss-cli
+    npm install
+    jss start:connected
+```
+
+Install blockchain with npm (dotnet tool):-
+
+```bash
+    install -g neo.express
+    install -g neo.compiler.csharp
+```
+
+## Tech Stack
+
+**Client:** NextJS, TailwindCSS, Blockchain
+**Server:** Firebase DB, Sitecore
+
+## Features
+
+- SignUp/ SignIn
+- Campaign creation for fund raising
+- Donation with crypto payment method
+- Data security using blockchain
